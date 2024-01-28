@@ -38,12 +38,18 @@ class LoginRegisterController extends Controller
                 "password" => Hash::make($request->password)
 
             ]);
+
+            //Generated Token Expire time 
+            Passport::personalAccessTokensExpireIn(now()->addMinutes(15));
+            
+            //token generation
+            $token = $user->createToken("myToken")->accessToken;
             
             // Response
-
             return response()->json([
                 "status" => true,
-                "message" => "user created successfully"
+                "message" => "user created successfully",
+                "token" => $token
 
             ]);
 
@@ -75,7 +81,7 @@ class LoginRegisterController extends Controller
                 $user = Auth::user();
 
 // setting expiry time to the generated token
-                Passport::personalAccessTokensExpireIn(now()->addMinutes(2));
+                Passport::personalAccessTokensExpireIn(now()->addMinutes(15));
 
                 $token = $user->createToken("myToken")->accessToken;
 
